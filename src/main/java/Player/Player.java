@@ -1,51 +1,43 @@
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+package Player;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import Game.CheckerV2;
+import Game.Game;
+import Pawn.*;
+import Pawn.Color;
+
+import java.awt.Point;
+import java.util.*;
 import java.util.List;
-import java.util.Scanner;
 
-public class Player {
+public abstract class Player<T, D> {
     private final String     name;
-    private final Pawn.Color color;
-    private final PLayerType pLayerType;
+    private final Color color;
 
 
-    public Player(String name, Pawn.Color color, PLayerType pLayerType) {
+    public Player(String name, Color color) {
         this.name = name;
         this.color = color;
-        this.pLayerType = pLayerType;
     }
 
     public String getName() {
         return name;
     }
 
-    public Pawn.Color getColor() {
+    public Color getColor() {
         return color;
     }
 
-    public PLayerType getpLayerType() {
-        return pLayerType;
-    }
+    public abstract D getMove(Game<T,D> game);
 
-    public Pair<Point, Point> getAction(){
-        var source      = readPosition("Source Point: ");
-        var destination = readPosition("Destination Point: ");
-        return new ImmutablePair<>(source, destination);
-    }
-
-    public List<Pawn> generatePawns(){
+    public List<Pawn> generatePawns(int numOfPawns, CheckerV2 game){
         List<Pawn> pawns = new ArrayList<>();
-        for(int i = 1; i < 13; i++){
-            pawns.add(new Pawn(color,String.format("%s_%02d", name, i), Pawn.Type.NORMAL));
+        for(int i = 0; i < numOfPawns; i++){
+            pawns.add(new NormalPawn(color, String.format("%s_%02d", name, i + 1), game));
         }
         return pawns;
     }
 
-    private Point readPosition(String message){
+    Point readPosition(String message){
         int x;
         int y;
         Scanner scanner = new Scanner(System.in);
@@ -70,8 +62,8 @@ public class Player {
             return new Point(x, y);
         }
     }
-
-    enum PLayerType {
-        USER, COMPUTER
+    @Override
+    public String toString() {
+        return name;
     }
 }
